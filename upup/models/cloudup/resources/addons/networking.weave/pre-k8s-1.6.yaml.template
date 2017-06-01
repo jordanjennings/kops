@@ -27,7 +27,7 @@ spec:
       hostPID: true
       containers:
         - name: weave
-          image: weaveworks/weave-kube:1.9.4
+          image: weaveworks/weave-kube:1.9.7
           command:
             - /home/weave/launch.sh
           livenessProbe:
@@ -58,13 +58,13 @@ spec:
             limits:
               cpu: 100m
               memory: 200Mi
-          {{if .Networking.Weave.MTU }}
+          {{- if .Networking.Weave.MTU }}
           env:
             - name: WEAVE_MTU
               value: "{{ .Networking.Weave.MTU }}"
-          {{end}}
+          {{- end}}
         - name: weave-npc
-          image: weaveworks/weave-npc:1.9.4
+          image: weaveworks/weave-npc:1.9.7
           resources:
             requests:
               cpu: 100m
@@ -74,6 +74,12 @@ spec:
               memory: 200Mi
           securityContext:
             privileged: true
+          env:
+          - name: HOSTNAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: spec.nodeName
       restartPolicy: Always
       volumes:
         - name: weavedb
